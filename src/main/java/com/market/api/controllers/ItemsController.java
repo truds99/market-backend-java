@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.market.api.dtos.ItemDTO;
 import com.market.api.models.ItemModel;
-import com.market.api.repositories.ItemRepository;
 import com.market.api.services.ItemService;
 
 import jakarta.validation.Valid;
@@ -51,9 +50,13 @@ public class ItemsController {
 
     @PostMapping()
     public ResponseEntity<Object> postItem(@RequestBody @Valid ItemDTO body) {
-        ItemModel item = itemService.postItem(body);
+        Optional<ItemModel> item = itemService.postItem(body);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(item);
+        if (!item.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("item already registered");
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(item.get());
     }
 
     @PutMapping("/{id}")

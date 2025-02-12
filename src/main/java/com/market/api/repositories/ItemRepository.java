@@ -7,5 +7,5 @@ import com.market.api.models.ItemModel;
 
 @Repository
 public interface ItemRepository extends JpaRepository<ItemModel, Long> {
-    
+    boolean existsByName(String name);
 }

@@ -2,18 +2,10 @@ package com.market.api.services;
 
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-
 import com.market.api.dtos.ItemDTO;
 import com.market.api.models.ItemModel;
 import com.market.api.repositories.ItemRepository;
-
-import jakarta.validation.Valid;
 
 @Service
 public class ItemService {
@@ -37,11 +29,14 @@ public class ItemService {
         }
     }
 
-    public ItemModel postItem(ItemDTO body) {
+    public Optional<ItemModel> postItem(ItemDTO body) {
+        if (itemRepository.existsByName(body.getName())) {
+            return Optional.empty();
+        }
+
         ItemModel item = new ItemModel(body);
         itemRepository.save(item);
-
-        return item;
+        return Optional.of(item);
     }
 
     public Optional<ItemModel> updateItem(Long id, ItemDTO body) {
