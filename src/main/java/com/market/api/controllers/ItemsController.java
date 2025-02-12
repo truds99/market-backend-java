@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 
@@ -33,8 +34,14 @@ public class ItemsController {
     }
 
     @GetMapping("/{id}")
-    public String getItemsById(@PathVariable("id") Long id) {
-        return "list " + id;
+    public Optional<ItemModel> getItemsById(@PathVariable("id") Long id) {
+        Optional<ItemModel> item = itemRepository.findById(id);
+
+        if (!item.isPresent()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(item.get());
+        }
     }
 
     @PostMapping()
