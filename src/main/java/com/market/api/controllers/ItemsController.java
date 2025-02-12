@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
 
@@ -32,42 +34,46 @@ public class ItemsController {
     }
     
     @GetMapping()
-    public List<ItemModel> getItems() {
-        return itemRepository.findAll();
+    public ResponseEntity<Object> getItems() {
+        return ResponseEntity.status(HttpStatus.OK).body(itemRepository.findAll());
     }
 
     @GetMapping("/{id}")
-    public Optional<ItemModel> getItemsById(@PathVariable("id") Long id) {
+    public ResponseEntity<Object> getItemsById(@PathVariable("id") Long id) {
         Optional<ItemModel> item = itemRepository.findById(id);
 
         if (!item.isPresent()) {
-            return Optional.empty();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("item not found");
         } else {
-            return Optional.of(item.get());
+            return ResponseEntity.status(HttpStatus.OK).body(item.get());
         }
     }
 
     @PostMapping()
-    public void postItem(@RequestBody @Valid ItemDTO body) {
+    public ResponseEntity<Object> postItem(@RequestBody @Valid ItemDTO body) {
         ItemModel item = new ItemModel(body);
         itemRepository.save(item);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(item);
     }
 
     @PutMapping("/{id}")
-    public void updateItem(@PathVariable("id") Long id, @RequestBody @Valid ItemDTO body) {
+    public ResponseEntity<Object> updateItem(@PathVariable("id") Long id, @RequestBody @Valid ItemDTO body) {
         Optional<ItemModel> item = itemRepository.findById(id);
 
         if (!item.isPresent()) {
-           
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("item not found");
         }
 
         ItemModel newItem = new ItemModel(body);
         newItem.setId(id);
         itemRepository.save(newItem);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @DeleteMapping("/{id}")
-    public void deleteItem(@PathVariable("id") Long id) {
+    public ResponseEntity<Object> deleteItem(@PathVariable("id") Long id) {
         itemRepository.deleteById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
