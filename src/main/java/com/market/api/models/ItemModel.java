@@ -1,5 +1,7 @@
 package com.market.api.models;
 
+import com.market.api.dtos.ItemDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,6 +29,9 @@ public class ItemModel {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false)
-    private String type;
+    public ItemModel (ItemDTO dto) {
+        this.name = dto.getName();
+        this.quantity = dto.getQuantity();
+    }
+    
 }

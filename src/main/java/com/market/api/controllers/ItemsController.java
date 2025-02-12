@@ -3,8 +3,11 @@ package com.market.api.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.market.api.dtos.ItemDTO;
 import com.market.api.models.ItemModel;
 import com.market.api.repositories.ItemRepository;
+
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,8 +48,9 @@ public class ItemsController {
     }
 
     @PostMapping()
-    public String postItem(@RequestBody String body) {
-        return body;
+    public void postItem(@RequestBody @Valid ItemDTO body) {
+        ItemModel item = new ItemModel(body);
+        itemRepository.save(item);
     }
 
     @PutMapping("/{id}")
@@ -55,7 +59,7 @@ public class ItemsController {
     }
 
     @DeleteMapping("/{id}")
-    public String deleteItem(@PathVariable("id") Long id) {
-        return "deleted";
+    public void deleteItem(@PathVariable("id") Long id) {
+        itemRepository.deleteById(id);
     }
 }
